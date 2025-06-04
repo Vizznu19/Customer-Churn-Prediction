@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,16 +10,20 @@ import CustomerDetails from '@/components/CustomerDetails';
 import ChurnFactors from '@/components/ChurnFactors';
 import CustomerActions from '@/components/CustomerActions';
 import PredictionChart from '@/components/PredictionChart';
+import AddCustomerForm from '@/components/AddCustomerForm';
 import { mockCustomerService } from '@/services/mockCustomerService';
 import { Customer } from '@/types/customer';
-import { Search, TrendingUp, Users, AlertTriangle } from 'lucide-react';
+import { Search, TrendingUp, Users, AlertTriangle, Home, UserPlus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
   const [customerData, setCustomerData] = useState<Customer | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showAddCustomer, setShowAddCustomer] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Get sample customer IDs for the dropdown
   const sampleCustomers = mockCustomerService.getSampleCustomers();
@@ -90,9 +93,19 @@ const Index = () => {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Customer Churn Navigator</h1>
-              <p className="mt-1 text-sm text-gray-600">Advanced churn prediction and customer analytics</p>
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="outline"
+                onClick={() => navigate('/')}
+                className="flex items-center space-x-2"
+              >
+                <Home className="w-4 h-4" />
+                <span>Home</span>
+              </Button>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Customer Churn Navigator</h1>
+                <p className="mt-1 text-sm text-gray-600">Advanced churn prediction and customer analytics</p>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               <Badge variant="outline" className="px-3 py-1">
@@ -109,57 +122,86 @@ const Index = () => {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Customer Lookup Section */}
-        <Card className="mb-8 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg">
-            <CardTitle className="flex items-center">
-              <Search className="w-5 h-5 mr-2" />
-              Customer Lookup
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Customer ID</label>
-                <Input
-                  placeholder="Enter Customer ID (e.g., 3868-QPYBK)"
-                  value={selectedCustomerId}
-                  onChange={(e) => setSelectedCustomerId(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      handleCustomerLookup(selectedCustomerId);
-                    }
-                  }}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Or Select from Recent</label>
-                <Select
-                  value={selectedCustomerId}
-                  onValueChange={setSelectedCustomerId}
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <Card className="shadow-lg border-blue-200">
+            <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg">
+              <CardTitle className="flex items-center">
+                <Search className="w-5 h-5 mr-2" />
+                Customer Lookup
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Customer ID</label>
+                  <Input
+                    placeholder="Enter Customer ID (e.g., 3868-QPYBK)"
+                    value={selectedCustomerId}
+                    onChange={(e) => setSelectedCustomerId(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleCustomerLookup(selectedCustomerId);
+                      }
+                    }}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Or Select from Recent</label>
+                  <Select
+                    value={selectedCustomerId}
+                    onValueChange={setSelectedCustomerId}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose a customer..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white z-50">
+                      {sampleCustomers.map((customer) => (
+                        <SelectItem key={customer.id} value={customer.id}>
+                          {customer.id} - Risk: {customer.churnProbability}%
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button 
+                  onClick={() => handleCustomerLookup(selectedCustomerId)}
+                  disabled={isLoading}
+                  className="bg-blue-600 hover:bg-blue-700"
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose a customer..." />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white z-50">
-                    {sampleCustomers.map((customer) => (
-                      <SelectItem key={customer.id} value={customer.id}>
-                        {customer.id} - Risk: {customer.churnProbability}%
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  {isLoading ? 'Analyzing...' : 'Analyze Customer'}
+                </Button>
               </div>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-lg border-green-200">
+            <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg">
+              <CardTitle className="flex items-center">
+                <UserPlus className="w-5 h-5 mr-2" />
+                Add New Customer
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <p className="text-gray-600 mb-4">Add a new customer to the database and get instant churn predictions.</p>
               <Button 
-                onClick={() => handleCustomerLookup(selectedCustomerId)}
-                disabled={isLoading}
-                className="bg-blue-600 hover:bg-blue-700"
+                onClick={() => setShowAddCustomer(true)}
+                className="w-full bg-green-600 hover:bg-green-700"
               >
-                {isLoading ? 'Analyzing...' : 'Analyze Customer'}
+                <UserPlus className="w-4 h-4 mr-2" />
+                Add Customer
               </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Add Customer Form Modal */}
+        {showAddCustomer && (
+          <AddCustomerForm 
+            isOpen={showAddCustomer}
+            onClose={() => setShowAddCustomer(false)}
+          />
+        )}
 
         {/* Customer Analysis Results */}
         {customerData && (
