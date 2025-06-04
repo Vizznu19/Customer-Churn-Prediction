@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, BarChart3, Users, TrendingUp, Brain } from 'lucide-react';
+import { ArrowRight, BarChart3, Users, TrendingUp, Brain, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Landing = () => {
@@ -17,13 +17,23 @@ const Landing = () => {
             <Brain className="w-8 h-8 text-blue-600" />
             <span className="text-xl font-bold text-gray-900">Customer Churn AI</span>
           </div>
-          <Button
-            onClick={() => navigate('/dashboard')}
-            variant="outline"
-            className="border-blue-200 text-blue-600 hover:bg-blue-50"
-          >
-            Dashboard
-          </Button>
+          <div className="flex items-center space-x-4">
+            <Button
+              onClick={() => navigate('/')}
+              variant="ghost"
+              className="text-gray-600 hover:text-blue-600"
+            >
+              <Home className="w-4 h-4 mr-2" />
+              Home
+            </Button>
+            <Button
+              onClick={() => navigate('/dashboard')}
+              variant="outline"
+              className="border-blue-200 text-blue-600 hover:bg-blue-50"
+            >
+              Dashboard
+            </Button>
+          </div>
         </div>
       </nav>
 
