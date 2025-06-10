@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
@@ -25,7 +24,6 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ isOpen, onClose }) =>
     monthlyCharges: undefined,
     contract: 'Monthly',
     subscriptionType: 'Basic',
-    paymentMethod: 'Credit Card',
     paymentDelay: 0,
     lastInteraction: 0,
     supportTickets: 0,
@@ -76,7 +74,6 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ isOpen, onClose }) =>
         monthlyCharges: monthlyCharges,
         contract: newCustomer.contract as ContractType,
         subscriptionType: newCustomer.subscriptionType as SubscriptionType,
-        paymentMethod: newCustomer.paymentMethod || 'Credit Card',
         paymentDelay: paymentDelay,
         lastInteraction: lastInteraction,
         supportTickets: Number(newCustomer.supportTickets) || 0,
@@ -98,7 +95,6 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ isOpen, onClose }) =>
         monthlyCharges: undefined,
         contract: 'Monthly',
         subscriptionType: 'Basic',
-        paymentMethod: 'Credit Card',
         paymentDelay: 0,
         lastInteraction: 0,
         supportTickets: 0,
@@ -208,21 +204,6 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ isOpen, onClose }) =>
                 <SelectItem value="Basic">Basic</SelectItem>
                 <SelectItem value="Standard">Standard</SelectItem>
                 <SelectItem value="Premium">Premium</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="paymentMethod">Payment Method</Label>
-            <Select value={newCustomer.paymentMethod} onValueChange={(value) => setNewCustomer({...newCustomer, paymentMethod: value})}>
-              <SelectTrigger>
-                <SelectValue placeholder="Credit Card (default)" />
-              </SelectTrigger>
-              <SelectContent className="bg-white z-50">
-                <SelectItem value="Credit Card">Credit Card</SelectItem>
-                <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
-                <SelectItem value="Electronic Check">Electronic Check</SelectItem>
-                <SelectItem value="Mailed Check">Mailed Check</SelectItem>
               </SelectContent>
             </Select>
           </div>

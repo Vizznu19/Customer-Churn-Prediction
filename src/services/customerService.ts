@@ -1,4 +1,3 @@
-
 import { Customer, NewCustomerData } from '../types/customer';
 
 class CustomerService {
@@ -25,7 +24,6 @@ class CustomerService {
         totalCharges: data['Total Spend'],
         contract: data['Contract Length'],
         subscriptionType: data['Subscription Type'] || 'Basic',
-        paymentMethod: data['Payment Method'] || 'Credit Card',
         paymentDelay: data['Payment Delay'] || 0,
         lastInteraction: data['Last Interaction'] || 0,
         supportTickets: data['Support Calls'],
@@ -91,7 +89,6 @@ class CustomerService {
           'Total Spend': customerData.monthlyCharges * customerData.tenure,
           'Contract Length': customerData.contract || 'Monthly',
           'Subscription Type': customerData.subscriptionType || 'Basic',
-          'Payment Method': customerData.paymentMethod || 'Credit Card',
           'Payment Delay': customerData.paymentDelay || 0,
           'Last Interaction': customerData.lastInteraction || 0
         }),
@@ -131,4 +128,4 @@ class CustomerService {
 }
 
 const customerService = new CustomerService();
-export default customerService;
+export default customerService; 
