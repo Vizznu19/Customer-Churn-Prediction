@@ -1,3 +1,4 @@
+
 export interface Customer {
   id: string;
   gender: string;
@@ -7,6 +8,7 @@ export interface Customer {
   totalCharges: number;
   contract: string;
   subscriptionType: string;
+  paymentMethod: string;
   paymentDelay: number;
   lastInteraction: number;
   supportTickets: number;
@@ -24,14 +26,15 @@ export interface Customer {
 export interface NewCustomerData {
   gender: string;
   age: number;
-  tenure?: number;
+  tenure: number;
   monthlyCharges: number;
-  contract?: string;
-  subscriptionType?: string;
-  paymentDelay?: number;
-  lastInteraction?: number;
-  supportTickets?: number;
-  usageFrequency?: number;
+  contract: string;
+  subscriptionType: string;
+  paymentMethod: string;
+  paymentDelay: number;
+  lastInteraction: number;
+  supportTickets: number;
+  usageFrequency: number;
 }
 
 export type ContractType = 'Monthly' | 'Quarterly' | 'Annual';
