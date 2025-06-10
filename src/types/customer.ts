@@ -1,4 +1,5 @@
 
+
 export interface Customer {
   id: string;
   gender: string;
@@ -40,3 +41,4 @@ export interface NewCustomerData {
 export type ContractType = 'Monthly' | 'Quarterly' | 'Annual';
 export type SubscriptionType = 'Basic' | 'Standard' | 'Premium';
 export type Gender = 'Male' | 'Female';
+export type PaymentMethod = 'Credit Card' | 'Bank Transfer' | 'Electronic Check' | 'Mailed Check';
