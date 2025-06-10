@@ -1,87 +1,60 @@
-
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Customer } from '@/types/customer';
+import { Card } from '@/components/ui/card';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const PredictionChart = () => {
-  // Sample data for recent predictions
-  const data = [
-    { customerId: '1234-ABCD', churnProbability: 75, riskLevel: 'High' },
-    { customerId: '5678-EFGH', churnProbability: 45, riskLevel: 'Medium' },
-    { customerId: '9012-IJKL', churnProbability: 25, riskLevel: 'Low' },
-    { customerId: '3456-MNOP', churnProbability: 85, riskLevel: 'High' },
-    { customerId: '7890-QRST', churnProbability: 35, riskLevel: 'Low' },
-    { customerId: '2468-UVWX', churnProbability: 60, riskLevel: 'Medium' },
-    { customerId: '1357-YZKM', churnProbability: 90, riskLevel: 'High' },
-    { customerId: '8642-LNPQ', churnProbability: 20, riskLevel: 'Low' }
-  ];
+interface PredictionChartProps {
+  customer: Customer;
+}
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div className="bg-white p-3 border rounded-lg shadow-lg">
-          <p className="font-semibold">{`Customer: ${label}`}</p>
-          <p className="text-blue-600">{`Churn Risk: ${data.churnProbability}%`}</p>
-          <p className={`text-sm ${
-            data.riskLevel === 'High' ? 'text-red-600' : 
-            data.riskLevel === 'Medium' ? 'text-orange-600' : 'text-green-600'
-          }`}>
-            {`Risk Level: ${data.riskLevel}`}
-          </p>
-        </div>
-      );
+const PredictionChart: React.FC<PredictionChartProps> = ({ customer }) => {
+  // Generate historical data points based on customer metrics
+  const generateHistoricalData = () => {
+    const months = 6;
+    const data = [];
+    const baseRisk = customer.churnProbability;
+    
+    for (let i = 0; i < months; i++) {
+      const monthsAgo = months - i - 1;
+      const riskVariation = Math.sin(i) * 10; // Create some natural variation
+      const risk = Math.max(0, Math.min(100, baseRisk + riskVariation));
+      
+      data.push({
+        month: `Month ${monthsAgo + 1}`,
+        risk: Math.round(risk)
+      });
     }
-    return null;
+    
+    return data;
   };
 
-  const getBarColor = (riskLevel: string) => {
-    switch (riskLevel) {
-      case 'High': return '#dc2626';
-      case 'Medium': return '#ea580c';
-      case 'Low': return '#16a34a';
-      default: return '#6b7280';
-    }
-  };
-
-  const CustomBar = (props: any) => {
-    const { payload } = props;
-    const fill = getBarColor(payload.riskLevel);
-    return <Bar {...props} fill={fill} />;
-  };
+  const data = generateHistoricalData();
 
   return (
-    <div className="w-full h-80">
+    <div className="w-full h-[300px]">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart
+        <LineChart
           data={data}
           margin={{
-            top: 20,
+            top: 5,
             right: 30,
             left: 20,
             bottom: 5,
           }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-          <XAxis 
-            dataKey="customerId" 
-            tick={{ fontSize: 12 }}
-            angle={-45}
-            textAnchor="end"
-            height={80}
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="month" />
+          <YAxis domain={[0, 100]} />
+          <Tooltip />
+          <Line
+            type="monotone"
+            dataKey="risk"
+            stroke="#2563eb"
+            strokeWidth={2}
+            dot={{ fill: '#2563eb', strokeWidth: 2 }}
+            name="Churn Risk"
           />
-          <YAxis 
-            tick={{ fontSize: 12 }}
-            label={{ value: 'Churn Probability (%)', angle: -90, position: 'insideLeft' }}
-          />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend />
-          <Bar 
-            dataKey="churnProbability" 
-            name="Churn Probability (%)"
-            shape={<CustomBar />}
-            radius={[4, 4, 0, 0]}
-          />
-        </BarChart>
+        </LineChart>
       </ResponsiveContainer>
     </div>
   );

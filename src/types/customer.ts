@@ -1,4 +1,3 @@
-
 export interface Customer {
   id: string;
   gender: string;
@@ -7,20 +6,34 @@ export interface Customer {
   monthlyCharges: number;
   totalCharges: number;
   contract: string;
-  paymentMethod: string;
+  subscriptionType: string;
+  paymentDelay: number;
+  lastInteraction: number;
   supportTickets: number;
   usageFrequency: number;
   churnProbability: number;
+  churnFactors: { [key: string]: number };
+  churnStrategies: {
+    retention_focus: string;
+    engagement_strategy: string;
+    pricing_optimization: string;
+    service_enhancement: string;
+  };
 }
 
 export interface NewCustomerData {
   gender: string;
   age: number;
-  tenure: number;
+  tenure?: number;
   monthlyCharges: number;
-  totalCharges: number;
-  contract: string;
-  paymentMethod: string;
-  supportTickets: number;
-  usageFrequency: number;
+  contract?: string;
+  subscriptionType?: string;
+  paymentDelay?: number;
+  lastInteraction?: number;
+  supportTickets?: number;
+  usageFrequency?: number;
 }
+
+export type ContractType = 'Monthly' | 'Quarterly' | 'Annual';
+export type SubscriptionType = 'Basic' | 'Standard' | 'Premium';
+export type Gender = 'Male' | 'Female';

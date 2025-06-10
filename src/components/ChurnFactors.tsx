@@ -1,74 +1,63 @@
-
 import React from 'react';
-import { Customer } from '@/types/customer';
+import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 
 interface ChurnFactorsProps {
-  customer: Customer;
+  factors: { [key: string]: number };
 }
 
-const ChurnFactors = ({ customer }: ChurnFactorsProps) => {
-  // Calculate contributing factors based on customer data
-  const factors = [
-    {
-      name: 'Contract Type Risk',
-      value: customer.contract === 'Month-to-month' ? 85 : customer.contract === 'One year' ? 40 : 20,
-      description: customer.contract === 'Month-to-month' ? 'High risk - no long-term commitment' : 'Lower risk - committed contract'
-    },
-    {
-      name: 'Payment Method Risk',
-      value: customer.paymentMethod === 'Electronic check' ? 70 : customer.paymentMethod === 'Mailed check' ? 60 : 30,
-      description: 'Electronic checks have higher churn correlation'
-    },
-    {
-      name: 'Support Ticket Volume',
-      value: Math.min(customer.supportTickets * 15, 100),
-      description: customer.supportTickets > 3 ? 'High support volume indicates dissatisfaction' : 'Normal support interaction'
-    },
-    {
-      name: 'Usage Frequency Impact',
-      value: customer.usageFrequency < 3 ? 80 : customer.usageFrequency < 6 ? 50 : 25,
-      description: customer.usageFrequency < 3 ? 'Low usage indicates low engagement' : 'Good engagement level'
-    },
-    {
-      name: 'Tenure Risk',
-      value: customer.tenure < 12 ? 75 : customer.tenure < 24 ? 45 : 25,
-      description: customer.tenure < 12 ? 'New customers are more likely to churn' : 'Established customer relationship'
-    },
-    {
-      name: 'Financial Impact',
-      value: customer.monthlyCharges > 80 ? 65 : customer.monthlyCharges > 50 ? 40 : 25,
-      description: customer.monthlyCharges > 80 ? 'High charges may drive churn' : 'Moderate pricing impact'
-    }
-  ].sort((a, b) => b.value - a.value);
+const ChurnFactors: React.FC<ChurnFactorsProps> = ({ factors }) => {
+  const factorDescriptions: { [key: string]: string } = {
+    'Usage Frequency Impact': 'Level of service engagement',
+    'Contract Type Risk': 'Risk based on contract commitment length',
+    'Subscription Type Impact': 'Impact based on subscription tier (Basic/Standard/Premium)',
+    'Payment Delay Risk': 'Risk based on payment delay history',
+    'Last Interaction Risk': 'Risk based on days since last service interaction',
+    'Tenure Risk': 'Risk based on customer relationship length',
+    'Financial Impact': 'Impact of pricing and charges',
+    'Support Ticket Volume': 'Impact of support ticket frequency',
+    'High Support Calls': 'Risk from high support interaction',
+    'Recent Inactivity': 'Risk from decreased service usage',
+    'Low Usage': 'Risk from low service engagement',
+    'Short Contract': 'Risk from shorter contract duration',
+    'New Customer': 'Higher risk during initial service period'
+  };
 
-  const getProgressColor = (value: number) => {
-    if (value >= 70) return 'bg-red-500';
-    if (value >= 40) return 'bg-orange-500';
+  const sortedFactors = Object.entries(factors)
+    .sort(([, a], [, b]) => b - a)
+    .map(([factor, value]) => ({
+      name: factor,
+      value: Math.round(value),
+      description: factorDescriptions[factor] || 'Contributing factor to churn risk'
+    }));
+
+  const getColorForValue = (value: number) => {
+    if (value >= 75) return 'bg-red-500';
+    if (value >= 50) return 'bg-orange-500';
+    if (value >= 25) return 'bg-yellow-500';
     return 'bg-green-500';
   };
 
   return (
     <div className="space-y-6">
-      {factors.map((factor, index) => (
-        <div key={index} className="space-y-2">
+      {sortedFactors.map((factor) => (
+        <div key={factor.name} className="space-y-2">
           <div className="flex justify-between items-center">
-            <h4 className="text-sm font-medium text-gray-900">{factor.name}</h4>
+            <span className="text-sm font-medium text-gray-900">{factor.name}</span>
             <span className="text-sm font-semibold text-gray-700">{factor.value}%</span>
           </div>
-          <div className="relative">
-            <Progress 
-              value={factor.value} 
-              className="h-3"
-            />
+          <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
             <div 
-              className={`absolute top-0 left-0 h-3 rounded-full transition-all duration-500 ${getProgressColor(factor.value)}`}
+              className={`h-full ${getColorForValue(factor.value)} transition-all duration-300`}
               style={{ width: `${factor.value}%` }}
             />
           </div>
-          <p className="text-xs text-gray-600">{factor.description}</p>
+          <p className="text-xs text-gray-600 mt-1">{factor.description}</p>
         </div>
       ))}
+      {sortedFactors.length === 0 && (
+        <p className="text-gray-500 text-center">No significant churn factors identified.</p>
+      )}
     </div>
   );
 };
